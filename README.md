@@ -28,7 +28,7 @@ CertiChain is a decentralized certificate issuance and verification MVP. Issuers
 - `docs/` — architecture, API, security and test documentation.
 
 ## Requirements
-- Node.js 20+
+- Node.js 22.12+
 - npm
 - MetaMask or another injected EVM wallet
 - Hardhat local node for local development; Sepolia ETH for public testnet deployment
