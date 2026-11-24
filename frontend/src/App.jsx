@@ -29,7 +29,7 @@ export default function App() {
   async function connectWallet() {
     try {
       if (!window.ethereum) throw new Error("MetaMask was not detected. Install the browser wallet first.");
-      const p = new ethers.BrowserProvider(window.ethereum);
+      // Reload after account/network changes so stale authorization is never reused.\n      if (window.ethereum.on) {\n        window.ethereum.removeAllListeners?.("chainChanged");\n        window.ethereum.removeAllListeners?.("accountsChanged");\n        window.ethereum.on("chainChanged", () => window.location.reload());\n        window.ethereum.on("accountsChanged", () => window.location.reload());\n      }\n      const p = new ethers.BrowserProvider(window.ethereum);
       await p.send("eth_requestAccounts", []);
       const signer = await p.getSigner();
       const address = await signer.getAddress();
