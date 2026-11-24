@@ -3,8 +3,8 @@
 ## Implemented controls
 - Owner-only issuer administration.
 - Issuer-only issuance.
-- Original-issuer-or-owner revocation rule.
-- Zero-value and empty metadata checks.
+- Original-issuer-or-owner revocation rule; owner emergency revocation remains available even if owner issuer status is disabled.
+- Zero-value and empty metadata checks, with holder/course labels capped at 120 UTF-8 bytes each.
 - Unique certificate ID and document fingerprint checks.
 - Browser-local file hashing; no file upload endpoint exists.
 - Environment files and private-key patterns are ignored by Git.
