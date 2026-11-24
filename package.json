@@ -21,5 +21,8 @@
   "overrides": {
     "tmp": "^0.2.7",
     "serialize-javascript": "^7.1.4"
+  },
+  "engines": {
+    "node": ">=22.12.0"
   }
 }
