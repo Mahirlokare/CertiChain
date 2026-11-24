@@ -1,6 +1,6 @@
 import { useMemo, useState } from "react";
 import { ethers } from "ethers";
-import { ABI, certificateIdFromText, getContract, hashFile } from "./contract";
+import { certificateIdFromText, getContract, getReadProvider, hashFile } from "./contract";
 
 const targetChain = Number(import.meta.env.VITE_CHAIN_ID || 31337);
 const short = (value) => value ? value.slice(0, 6) + "…" + value.slice(-4) : "";
@@ -80,11 +80,17 @@ export default function App() {
     if (!lookupId.trim()) return setNotice("Enter the certificate ID.");
     setBusy(true); setRecord(null); setVerification(null);
     try {
-      const p = provider || new ethers.JsonRpcProvider(
-        targetChain === 31337 ? "http://127.0.0.1:8545" : undefined
-      );
-      const c = getContract(p);
+      // Use the connected wallet only when it is on the configured chain.
+      // Otherwise use the explicitly configured, chain-bound public RPC endpoint.
+      let readProvider = getReadProvider();
+      if (provider) {
+        const walletNetwork = await provider.getNetwork();
+        if (Number(walletNetwork.chainId) === targetChain) readProvider = provider;
+      }
+      const c = getContract(readProvider);
       const id = certificateIdFromText(lookupId);
+      const network = await readProvider.getNetwork();
+      if (Number(network.chainId) !== targetChain) throw new Error("RPC endpoint is connected to the wrong network.");
       const certificate = await c.getCertificate(id);
       setRecord(certificate);
       if (verifyFile) {
