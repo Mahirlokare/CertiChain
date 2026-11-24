@@ -1,0 +1,35 @@
+name: Deploy CertiChain to Sepolia
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v5
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v5
+        with:
+          node-version: 22
+          cache: npm
+
+      - name: Install dependencies
+        run: npm install
+
+      - name: Compile contracts
+        run: npm run compile
+
+      - name: Deploy to Sepolia
+        env:
+          SEPOLIA_RPC_URL: ${{ secrets.SEPOLIA_RPC_URL }}
+          DEPLOYER_PRIVATE_KEY: ${{ secrets.DEPLOYER_PRIVATE_KEY }}
+        run: |
+          test -n "$SEPOLIA_RPC_URL" || (echo "Missing SEPOLIA_RPC_URL repository secret" && exit 1)
+          test -n "$DEPLOYER_PRIVATE_KEY" || (echo "Missing DEPLOYER_PRIVATE_KEY repository secret" && exit 1)
+          npm run deploy:sepolia
