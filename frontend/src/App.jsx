@@ -6,6 +6,9 @@ const targetChain = Number(import.meta.env.VITE_CHAIN_ID || 31337);
 const short = (value) => value ? value.slice(0, 6) + "…" + value.slice(-4) : "";
 const date = (seconds) => seconds ? new Date(Number(seconds) * 1000).toLocaleString() : "—";
 
+// Attach wallet listeners once without removing listeners owned by other dApps.
+let walletListenersAttached = false;
+
 export default function App() {
   const [account, setAccount] = useState("");
   const [provider, setProvider] = useState(null);
@@ -29,7 +32,13 @@ export default function App() {
   async function connectWallet() {
     try {
       if (!window.ethereum) throw new Error("MetaMask was not detected. Install the browser wallet first.");
-      // Reload after account/network changes so stale authorization is never reused.\n      if (window.ethereum.on) {\n        window.ethereum.removeAllListeners?.("chainChanged");\n        window.ethereum.removeAllListeners?.("accountsChanged");\n        window.ethereum.on("chainChanged", () => window.location.reload());\n        window.ethereum.on("accountsChanged", () => window.location.reload());\n      }\n      const p = new ethers.BrowserProvider(window.ethereum);
+      // Reload after account/network changes so stale authorization is never reused.
+      if (window.ethereum.on && !walletListenersAttached) {
+        window.ethereum.on("chainChanged", () => window.location.reload());
+        window.ethereum.on("accountsChanged", () => window.location.reload());
+        walletListenersAttached = true;
+      }
+      const p = new ethers.BrowserProvider(window.ethereum);
       await p.send("eth_requestAccounts", []);
       const signer = await p.getSigner();
       const address = await signer.getAddress();
@@ -82,11 +91,13 @@ export default function App() {
     try {
       // Use the connected wallet only when it is on the configured chain.
       // Otherwise use the explicitly configured, chain-bound public RPC endpoint.
-      let readProvider = getReadProvider();
+      let readProvider = null;
       if (provider) {
         const walletNetwork = await provider.getNetwork();
         if (Number(walletNetwork.chainId) === targetChain) readProvider = provider;
       }
+      // A connected wallet can serve reads; only require a public RPC when it cannot.
+      if (!readProvider) readProvider = getReadProvider();
       const c = getContract(readProvider);
       const id = certificateIdFromText(lookupId);
       const network = await readProvider.getNetwork();
