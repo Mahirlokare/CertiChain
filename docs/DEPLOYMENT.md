@@ -18,4 +18,4 @@
 4. Set frontend environment values to that address and `VITE_CHAIN_ID=11155111`.
 5. Run `cd frontend && npm run build`; host `frontend/dist` on a static hosting service.
 
-Never commit `.env`, private keys, recovery phrases or real user credentials. Verify the deployed contract source on the block explorer and test with both issuer and non-issuer wallets before a public demo.
+Never commit `.env`, private keys, recovery phrases or real user credentials. Use a dedicated deployment wallet and rotate any key that may have been exposed. Verify the deployed contract source on the block explorer and test with both issuer and non-issuer wallets before a public demo.
