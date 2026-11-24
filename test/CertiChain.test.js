@@ -74,4 +74,22 @@ describe("CertiChain", function () {
     await expect(contract.connect(outsider).revokeCertificate(certId))
       .to.be.revertedWithCustomError(contract, "Unauthorized");
   });
+  it("allows the owner to revoke even after owner issuer status is disabled", async function () {
+    const { contract, owner, issuer } = await deployFixture();
+    const certId = id("OWNER-REVOKE");
+    await contract.connect(issuer).issueCertificate(certId, id("OWNER-HASH"), "Asha", "Course");
+    await contract.setIssuer(owner.address, false);
+    await contract.revokeCertificate(certId);
+    const [valid, revoked] = await contract.verifyCertificate(certId, id("OWNER-HASH"));
+    expect(valid).to.equal(false);
+    expect(revoked).to.equal(true);
+  });
+
+  it("rejects metadata exceeding the documented length limit", async function () {
+    const { contract, issuer } = await deployFixture();
+    await expect(contract.connect(issuer).issueCertificate(
+      id("LONG-METADATA"), id("LONG-HASH"), "A".repeat(121), "Course"
+    )).to.be.revertedWithCustomError(contract, "InvalidMetadata");
+  });
+
 });
