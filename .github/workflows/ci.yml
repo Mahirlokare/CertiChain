@@ -34,3 +34,6 @@ jobs:
       - name: Build frontend
         working-directory: frontend
         run: npm run build
+      - name: Check frontend bundle output
+        working-directory: frontend
+        run: test -s dist/index.html
