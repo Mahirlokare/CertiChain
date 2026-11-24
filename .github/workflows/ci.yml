@@ -17,6 +17,10 @@ jobs:
           node-version: 22
       - name: Install contract dependencies
         run: npm install
+      - name: Report contract toolchain vulnerabilities
+        run: |
+          npm audit --json > /tmp/root-audit.json || true
+          node -e "const a=require('/tmp/root-audit.json'); for (const [name,v] of Object.entries(a.vulnerabilities || {})) console.log(name, v.severity, 'direct='+v.isDirect, 'fix='+JSON.stringify(v.fixAvailable))"
       - name: Compile contracts
         run: npm run compile
       - name: Run smart-contract tests
@@ -31,6 +35,14 @@ jobs:
       - name: Install frontend dependencies
         working-directory: frontend
         run: npm install
+      - name: Audit frontend production dependencies
+        working-directory: frontend
+        run: npm audit --omit=dev
+      - name: Report frontend toolchain vulnerabilities
+        working-directory: frontend
+        run: |
+          npm audit --json > /tmp/frontend-audit.json || true
+          node -e "const a=require('/tmp/frontend-audit.json'); for (const [name,v] of Object.entries(a.vulnerabilities || {})) console.log(name, v.severity, 'direct='+v.isDirect, 'fix='+JSON.stringify(v.fixAvailable))"
       - name: Build frontend
         working-directory: frontend
         run: npm run build
