@@ -20,7 +20,7 @@ jobs:
       - name: Report contract toolchain vulnerabilities
         run: |
           npm audit --json > /tmp/root-audit.json || true
-          node -e "const a=require('/tmp/root-audit.json'); for (const [name,v] of Object.entries(a.vulnerabilities || {})) console.log(name, v.severity, 'direct='+v.isDirect, 'fix='+JSON.stringify(v.fixAvailable))"
+          node -e "const a=require('/tmp/root-audit.json'); for (const [name,v] of Object.entries(a.vulnerabilities || {})) console.log(JSON.stringify({name,severity:v.severity,range:v.range,via:v.via,fixAvailable:v.fixAvailable}))"
       - name: Compile contracts
         run: npm run compile
       - name: Run smart-contract tests
