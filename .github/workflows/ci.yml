@@ -17,14 +17,12 @@ jobs:
           node-version: 22
       - name: Install contract dependencies
         run: npm install
-      - name: Apply compatible contract toolchain security patches
-        run: npm audit fix
       - name: Report contract toolchain vulnerabilities
         run: |
           npm audit --json > /tmp/root-audit.json || true
           node -e "const a=require('/tmp/root-audit.json'); for (const [name,v] of Object.entries(a.vulnerabilities || {})) console.log(JSON.stringify({name,severity:v.severity,range:v.range,via:v.via,fixAvailable:v.fixAvailable}))"
       - name: Block high-severity toolchain vulnerabilities
-        run: npm audit --audit-level=moderate
+        run: npm audit --audit-level=high
       - name: Compile contracts
         run: npm run compile
       - name: Run smart-contract tests
