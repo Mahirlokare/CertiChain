@@ -138,7 +138,7 @@ export default function App() {
       <div className="hero-meta"><span>SHA-256 fingerprinting</span><span>Issuer-controlled</span><span>Public verification</span></div>
     </section>
     {notice && <div className="notice" role="status">{notice}</div>}
-    {!canConfigure && <div className="notice warning">Contract not configured. Copy frontend/.env.example to frontend/.env and set VITE_CONTRACT_ADDRESS after deployment.</div>}
+    {!canConfigure && <div className="notice warning">Blockchain connection is not configured for this hosted build. The smart contract must be deployed to the selected network, then VITE_CONTRACT_ADDRESS, VITE_CHAIN_ID and VITE_RPC_URL must be set in the hosting service and the frontend rebuilt.</div>}
     <section className="grid">
       <article className="panel"><div className="panel-head"><div><div className="eyebrow">01 / ISSUER PORTAL</div><h2>Issue a certificate</h2></div><span className="pill">{issuer ? "Authorized issuer" : "Issuer access required"}</span></div>
         <p className="muted">Register the document fingerprint. Only an authorized wallet can issue credentials.</p>
