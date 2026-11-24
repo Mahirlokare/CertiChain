@@ -16,6 +16,11 @@
 - **RPC/provider risk:** verify the chain ID and contract address; use trusted RPC endpoints.
 - **Frontend configuration:** users must confirm they are connected to the intended network and contract.
 
+## Dependency audit snapshot
+- Frontend dependency audit: 0 known vulnerabilities in the latest completed CI audit.
+- Contract/development toolchain audit: 16 advisories were reported (13 low, 3 moderate), with no high-severity findings after overriding vulnerable `tmp` and `serialize-javascript` transitive packages.
+- The remaining findings are in the Hardhat 2 / test-tooling dependency tree. CI blocks high-severity findings; a clean full toolchain audit requires a reviewed Hardhat 3 migration and regression testing.
+
 ## Before production
 - Independent smart-contract audit and threat model.
 - Institutional identity/KYC and issuer onboarding process.
