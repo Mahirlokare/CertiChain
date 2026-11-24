@@ -71,7 +71,10 @@ contract CertiChain {
     ) external onlyIssuer {
         if (certificateId == bytes32(0)) revert InvalidCertificateId();
         if (documentHash == bytes32(0)) revert InvalidDocumentHash();
-        if (bytes(holderName).length == 0 || bytes(courseName).length == 0) revert InvalidMetadata();
+        if (
+            bytes(holderName).length == 0 || bytes(courseName).length == 0 ||
+            bytes(holderName).length > 120 || bytes(courseName).length > 120
+        ) revert InvalidMetadata();
         if (certificates[certificateId].issuedAt != 0) revert CertificateAlreadyExists();
         if (documentHashUsed[documentHash]) revert DocumentAlreadyRegistered();
 
@@ -90,7 +93,9 @@ contract CertiChain {
         emit CertificateIssued(certificateId, documentHash, msg.sender, holderName, courseName, timestamp);
     }
 
-    function revokeCertificate(bytes32 certificateId) external onlyIssuer {
+    function revokeCertificate(bytes32 certificateId) external {
+        // The owner retains emergency revocation authority even if removed from issuer status.
+        if (!isIssuer[msg.sender] && msg.sender != owner) revert Unauthorized();
         Certificate storage certificate = certificates[certificateId];
         if (certificate.issuedAt == 0) revert CertificateNotFound();
         if (certificate.revoked) revert AlreadyRevoked();
