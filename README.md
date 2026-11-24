@@ -71,6 +71,7 @@ Create `frontend/.env`:
 ```env
 VITE_CONTRACT_ADDRESS=0xYOUR_DEPLOYED_CONTRACT_ADDRESS
 VITE_CHAIN_ID=31337
+VITE_RPC_URL=
 ```
 Then:
 ```bash
@@ -89,8 +90,8 @@ Never commit `.env` or private keys. Only use a dedicated test wallet.
 ## Important limitations
 - SHA-256 proves file-byte integrity, not that the document is genuine or that the issuer is institutionally authorized.
 - Certificate metadata is public and permanent on a public chain. Store only data that is safe to disclose.
-- The current app expects the configured chain and deployed contract address to match.
-- No production audit, legal accreditation, institutional identity verification, IPFS storage or production monitoring is claimed.
+- The current app expects the configured chain and deployed contract address to match. For Sepolia or another public network, set `VITE_RPC_URL` to a trusted HTTPS RPC endpoint so public verification works without a connected wallet.
+- No production audit, legal accreditation, institutional identity verification, IPFS storage or production monitoring is claimed. Treat this release as testnet/demo launch-ready only until independent audit, operational controls and live end-to-end validation are complete.
 
 ## Documentation
 See [System Architecture](docs/ARCHITECTURE.md), [Smart Contract](docs/SMART_CONTRACT.md), [Security](docs/SECURITY.md), [Testing](docs/TESTING.md), and [Deployment](docs/DEPLOYMENT.md).
